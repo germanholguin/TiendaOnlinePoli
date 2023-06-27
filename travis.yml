@@ -1,0 +1,36 @@
+language: node_js
+
+os: linux
+dist: bionic
+
+node_js:
+  - "14"
+
+services:
+  - docker
+
+before_script:
+  - npm cache clean --force
+  - npm install -g npm@etiqueta
+  - echo "$DOCKER_USERNAME"
+  - echo "$DOCKER_PASSWORD"
+
+script:
+  - echo "Debug Script Start"
+  - sudo docker build -t malejandra1801/jenkins:etiqueta .
+  - echo "$DOCKER_PASSWORD" | docker login ghcr.io -u "$DOCKER_USERNAME" --password-stdin
+  - sudo docker tag malejandra1801/jenkins:etiqueta ghcr.io/malejandra1801/jenkins:etiqueta
+  - sudo docker push ghcr.io/malejandra1801/jenkins:etiqueta
+  - echo "Debug Script End "
+
+after_script:
+  - echo "Debug After Script Start"
+  - sudo docker stop jenkins
+  - sudo docker rm jenkins
+  - echo "Debug After Script End"
+
+deploy:
+  provider: script
+  script: sudo docker run -d --name jenkins -p 80:80 ghcr.io/malejandra1801/jenkins:etiqueta
+  on:
+    branch: main
