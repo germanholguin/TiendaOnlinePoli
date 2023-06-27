@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build and tag images') {
             steps {
-                sh 'sudo docker build -t malejandra1801/jenkins:etiqueta .'
+                sh 'sudo docker build -t malejandra1801/jenkins:etiqueta.'
                 sh 'sudo docker tag malejandra1801/jenkins:etiqueta ghcr.io/malejandra1801/jenkins:etiqueta'
             }
         }
