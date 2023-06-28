@@ -1,9 +1,17 @@
-FROM node:14 as build
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+# Pull base image.
+FROM python:3.9
 
-FROM nginx:1.17.1-alpine
-COPY --from=build /app/dist/angular-frontend /usr/share/nginx/html
+# Set environment variables.
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set work directory.
+WORKDIR /code
+
+# Install dependencies.
+COPY requirements.txt /code/
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Copy project.
+COPY . /code/
